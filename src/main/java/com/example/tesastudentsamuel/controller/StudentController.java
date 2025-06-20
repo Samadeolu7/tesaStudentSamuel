@@ -3,8 +3,10 @@ package com.example.tesastudentsamuel.controller;
 import com.example.tesastudentsamuel.exception.StudentNotFoundException;
 import com.example.tesastudentsamuel.model.request.student.StudentCreateRequest;
 import com.example.tesastudentsamuel.model.request.student.StudentUpdateRequest;
+import com.example.tesastudentsamuel.model.response.ApiResponse;
 import com.example.tesastudentsamuel.model.response.StudentResponse;
 import com.example.tesastudentsamuel.service.StudentService;
+import com.example.tesastudentsamuel.util.ResponseBuilder;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Validated  // enable @Min on @RequestParam
+@Validated
 @RestController
 @RequestMapping("/student")
 public class StudentController {
@@ -26,72 +28,65 @@ public class StudentController {
     }
 
     @PostMapping("/create-student")
-    public ResponseEntity<String> createStudent(
+    public ResponseEntity<ApiResponse<Void>> createStudent(
             @Valid @RequestBody StudentCreateRequest request
     ) {
         studentService.createStudent(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("Student created successfully");
+                .body(ResponseBuilder.success("Student created successfully", null));
     }
 
     @PostMapping("/update-student")
-    public ResponseEntity<String> updateStudent(
+    public ResponseEntity<ApiResponse<Void>> updateStudent(
             @Valid @RequestBody StudentUpdateRequest request
     ) {
-        try {
-            studentService.updateStudent(request);
-            return ResponseEntity.ok("Student updated successfully");
-        } catch (StudentNotFoundException ex) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(ex.getMessage());
-        }
+        studentService.updateStudent(request);
+        return ResponseEntity.ok(ResponseBuilder.success("Student updated successfully", null));
     }
 
     @GetMapping("/get-student-by-id")
-    public ResponseEntity<StudentResponse> getStudentById(
-            @RequestParam @Min(value = 1, message = "id must be ≥ 1") int id
+    public ResponseEntity<ApiResponse<StudentResponse>> getStudentById(
+            @RequestParam @Min(value = 100, message = "id must be ≥ 100") int id
     ) {
-        try {
-            StudentResponse resp = studentService.getStudentById(id);
-            return ResponseEntity.ok(resp);
-        } catch (StudentNotFoundException ex) {
-            return ResponseEntity.notFound().build();
-        }
+        StudentResponse resp = studentService.getStudentById(id);
+        return ResponseEntity.ok(ResponseBuilder.success(resp));
     }
 
     @GetMapping("/get-students")
-    public ResponseEntity<List<StudentResponse>> getAllStudents() {
+    public ResponseEntity<ApiResponse<List<StudentResponse>>> getAllStudents() {
         List<StudentResponse> students = studentService.getAllStudents();
-        return ResponseEntity.ok(students);
+        return ResponseEntity.ok(ResponseBuilder.success(students));
     }
 
     @GetMapping("/get-students-by-firstname")
-    public ResponseEntity<List<StudentResponse>> getStudentByFirstName(
+    public ResponseEntity<ApiResponse<List<StudentResponse>>> getStudentByFirstName(
             @RequestParam String firstName
     ) {
         List<StudentResponse> resp = studentService.getStudentByFirstName(firstName);
-        return ResponseEntity.ok(resp);
+        return ResponseEntity.ok(ResponseBuilder.success(resp));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<StudentResponse>>> search(
+            @RequestParam String query
+    ) {
+        List<StudentResponse> resp = studentService.search(query);
+        return ResponseEntity.ok(ResponseBuilder.success(resp));
     }
 
     @DeleteMapping("/delete-student")
-    public ResponseEntity<?> deleteStudentById(
-            @RequestParam @Min(value = 1, message = "id must be ≥ 1") int id
+    public ResponseEntity<ApiResponse<List<StudentResponse>>> deleteStudentById(
+            @RequestParam @Min(value = 100, message = "id must be ≥ 100") int id
     ) {
-        try {
-            List<StudentResponse> updatedList = studentService.softDeleteStudent(id);
-            return ResponseEntity.ok(updatedList);
-        } catch (StudentNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ex.getMessage());
-        }
+        List<StudentResponse> updatedList = studentService.softDeleteStudent(id);
+        return ResponseEntity.ok(ResponseBuilder.success(updatedList));
     }
 
-    // Optional: handle any other uncaught StudentNotFoundException
     @ExceptionHandler(StudentNotFoundException.class)
-    public ResponseEntity<String> handleNotFound(StudentNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+    public ResponseEntity<ApiResponse<Void>> handleNotFound(StudentNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ResponseBuilder.error(ex.getMessage()));
     }
 }

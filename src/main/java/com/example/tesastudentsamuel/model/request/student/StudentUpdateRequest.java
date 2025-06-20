@@ -1,7 +1,6 @@
 package com.example.tesastudentsamuel.model.request.student;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
@@ -10,14 +9,16 @@ import lombok.Data;
 @Builder
 public class StudentUpdateRequest {
     @NotNull(message = "studentId is required")
-    @Min(value = 100, message = "studentId must be ≥ 1")
-    private Integer studentId;
+    @Min(value = 100, message = "studentId must be ≥ 100")
+    private int studentId;
 
-    private String firstName;
+    private String studentFirstName;
 
-    private String lastName;
+    private String studentLastName;
 
-    private String stateOfOrigin;
+    private String studentStateOfOrigin;
 
-    private int age;
+    private int studentAge;
+
+    private String studentStatus;
 }

@@ -3,44 +3,54 @@ package com.example.tesastudentsamuel.repository.database.query;
 public class StudentQuery {
     public static final String INSERT_STUDENT = """
         INSERT INTO TESA_SAMUEL_Student
-          (firstName, lastName, stateOfOrigin, age)
+          (studentFirstName, studentLastName, studentStateOfOrigin, studentAge, studentStatus)
         VALUES
-          (:firstName, :lastName, :stateOfOrigin, :age)
+          (:firstName, :lastName, :stateOfOrigin, :age, COALESCE(:status, 'ACTIVE'))
     """;
 
     public static final String GET_ALL_STUDENTS = """
         SELECT *
           FROM TESA_SAMUEL_Student
-         WHERE deleted = 0
+         WHERE studentStatus != 'DELETED'
     """;
 
     public static final String GET_STUDENT_BY_ID = """
         SELECT *
           FROM TESA_SAMUEL_Student
          WHERE studentId = :studentId
-           AND deleted   = 0
+           AND studentStatus != 'DELETED'
     """;
 
     public static final String GET_STUDENT_BY_FIRSTNAME = """
         SELECT *
           FROM TESA_SAMUEL_Student
-         WHERE firstName = :firstName
-           AND deleted   = 0
+         WHERE studentFirstName = :firstName
+           AND studentStatus != 'DELETED'
+    """;
+
+    public static final String SEARCH_ALL_COLUMNS = """
+        SELECT *
+          FROM TESA_SAMUEL_Student
+          WHERE studentStatus != 'DELETED'
+          AND studentFirstName      LIKE :query
+          or studentLastName        LIKE :query
+          or studentStateOfOrigin   LIKE :query
     """;
 
     public static final String UPDATE_STUDENT = """
         UPDATE TESA_SAMUEL_Student
-           SET firstName     = COALESCE(:firstName,     firstName)
-             , lastName      = COALESCE(:lastName,      lastName)
-             , stateOfOrigin = COALESCE(:stateOfOrigin, stateOfOrigin)
-             , age           = COALESCE(:age,           age)
-         WHERE studentId    = :studentId
-           AND deleted      = 0
+           SET studentFirstName     = COALESCE(:firstName,     studentFirstName)
+             , studentLastName      = COALESCE(:lastName,      studentLastName)
+             , studentStateOfOrigin = COALESCE(:stateOfOrigin, studentStateOfOrigin)
+             , studentAge           = COALESCE(:age,           studentAge)
+             , studentStatus        = COALESCE(:status,        studentStatus)
+        WHERE studentId    = :studentId
+           AND studentStatus != 'DELETED'
     """;
 
     public static final String SOFT_DELETE_STUDENT = """
         UPDATE TESA_SAMUEL_Student
-           SET deleted = 1
+           SET studentStatus = 'DELETED'
          WHERE studentId = :studentId
     """;
 }

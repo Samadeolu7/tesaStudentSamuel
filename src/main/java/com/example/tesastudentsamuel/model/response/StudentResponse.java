@@ -7,10 +7,10 @@ import lombok.Data;
 @Builder
 public class StudentResponse {
     private int studentId;
-    private String firstName;
-    private String lastName;
-    private String stateOfOrigin;
-    private int age;
+    private String studentFirstName;
+    private String studentLastName;
+    private String studentStateOfOrigin;
+    private int studentAge;
     private String createdAt;
     private String updatedAt;
 }

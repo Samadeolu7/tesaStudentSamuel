@@ -14,6 +14,8 @@ public interface StudentRepository {
 
     List<Student> getAllStudents();
 
+    List<Student> search(String query);
+
     int updateStudent(Student student);
 
     int deleteStudent(int studentId);

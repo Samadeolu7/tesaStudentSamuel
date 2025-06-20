@@ -24,10 +24,11 @@ public class StudentRepositoryImpl implements StudentRepository {
     @Override
     public int createStudent( Student student){
         MapSqlParameterSource parameterSource = new MapSqlParameterSource()
-                .addValue("firstName", student.getFirstName())
-                .addValue("lastName", student.getLastName())
-                .addValue("age", student.getAge())
-                .addValue("stateOfOrigin", student.getStateOfOrigin());
+                .addValue("firstName", student.getStudentFirstName())
+                .addValue("lastName", student.getStudentLastName())
+                .addValue("age", student.getStudentAge())
+                .addValue("stateOfOrigin", student.getStudentStateOfOrigin())
+                .addValue("status", student.getStudentStatus());
 
         return jdbcTemplate.update(StudentQuery.INSERT_STUDENT,parameterSource);
     }
@@ -57,13 +58,23 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
+    public List<Student> search(String query) {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("query","%"+ query + "%");
+        BeanPropertyRowMapper<Student> studentRowMapper = new BeanPropertyRowMapper<>(Student.class);
+
+        return jdbcTemplate.query(StudentQuery.SEARCH_ALL_COLUMNS,parameterSource,studentRowMapper);
+    }
+
+    @Override
     public int updateStudent(Student student) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("studentId",    student.getStudentId())
-                .addValue("firstName", student.getFirstName())
-                .addValue("lastName", student.getLastName())
-                .addValue("age", student.getAge())
-                .addValue("stateOfOrigin", student.getStateOfOrigin());
+                .addValue("firstName", student.getStudentFirstName())
+                .addValue("lastName", student.getStudentLastName())
+                .addValue("age", student.getStudentAge())
+                .addValue("stateOfOrigin", student.getStudentStateOfOrigin())
+                .addValue("status",student.getStudentStatus());
         return jdbcTemplate.update(StudentQuery.UPDATE_STUDENT,parameterSource);
     }
 
@@ -74,4 +85,5 @@ public class StudentRepositoryImpl implements StudentRepository {
 
         return jdbcTemplate.update(StudentQuery.SOFT_DELETE_STUDENT,parameterSource);
     }
+
 }

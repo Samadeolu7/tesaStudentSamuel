@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Data
@@ -15,11 +14,11 @@ import java.sql.Timestamp;
 public class Student {
 
     private int studentId;
-    private String firstName;
-    private String lastName;
-    private String stateOfOrigin;
-    private int age;
+    private String studentFirstName;
+    private String studentLastName;
+    private String studentStateOfOrigin;
+    private int studentAge;
+    private String studentStatus;
     private Timestamp createdAt;
     private Timestamp updatedAt;
-    private boolean deleted;
 }

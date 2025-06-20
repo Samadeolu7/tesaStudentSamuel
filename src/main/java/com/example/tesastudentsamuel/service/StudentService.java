@@ -65,6 +65,15 @@ public class StudentService {
                 .collect(Collectors.toList());
     }
 
+    public List<StudentResponse> search(String query) {
+
+        return studentRepository
+                .search(query)
+                .stream()
+                .map(studentMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
     public List<StudentResponse> getAllStudents() {
         return studentRepository
                 .getAllStudents()

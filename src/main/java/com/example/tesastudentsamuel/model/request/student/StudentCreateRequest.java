@@ -10,14 +10,16 @@ import lombok.Data;
 public class StudentCreateRequest {
 
     @NotBlank(message = "firstName must not be blank")
-    private String firstName;
+    private String studentFirstName;
 
     @NotBlank(message = "lastName must not be blank")
-    private String lastName;
+    private String studentLastName;
 
     @NotBlank(message = "stateOfOrigin must not be blank")
-    private String stateOfOrigin;
+    private String studentStateOfOrigin;
 
     @Min(value = 0, message = "age must be non-negative")
-    private int age;
+    private int studentAge;
+
+    private String studentStatus;
 }
